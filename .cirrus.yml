@@ -1,0 +1,14 @@
+task:
+    freebsd_instance:
+      matrix:
+        - image: freebsd-12-1-release-amd64
+        - image: freebsd-12-2-release-amd64
+
+    build_script:
+      - ASSUME_ALWAYS_YES=yes pkg bootstrap -f
+    install_script: 
+      - make missing | xargs pkg install -y
+      - make BATCH=yes package
+      - mv work/pkg/* "fusefs-squashfs-$(uname -r | sed 's,-.*,,')$(uname -m).txz"
+    binaries_artifacts:
+        path: fusefs-squashfs-*.txz
